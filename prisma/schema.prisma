@@ -15,6 +15,10 @@ model User {
   image          String?
   accounts       Account[]
   sessions       Session[]
+
+  // ➕ Thêm 2 dòng này để fix lỗi:
+  cartItems      CartItem[]
+  orders         Order[]
 }
 
 model Account {
@@ -52,3 +56,89 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Category {
+  id    String  @id @default(cuid())
+  name  String
+  cakes Cake[]
+}
+
+model Cake {
+  id              String     @id @default(cuid())
+  name            String
+  description     String
+  fullDescription String
+  imageUrl        String
+  price           Decimal
+  categoryId      String
+  category        Category   @relation(fields: [categoryId], references: [id])
+  sizes           CakeSize[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+}
+
+model CakeSize {
+  id        String   @id @default(cuid())
+  sizeLabel String   // e.g., Small, Medium, Large
+  servings  String   // e.g., 6-8 servings
+  price     Decimal
+  cakeId    String
+  cake      Cake     @relation(fields: [cakeId], references: [id])
+  cartItems CartItem[]
+  orderItems OrderItem[]
+}
+
+model CartItem {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  cakeId   String
+  cake     Cake     @relation(fields: [cakeId], references: [id])
+  sizeId   String
+  size     CakeSize @relation(fields: [sizeId], references: [id])
+  quantity Int
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  totalPrice Decimal
+  status     String      // pending, paid, delivered, etc.
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id       String   @id @default(cuid())
+  orderId  String
+  order    Order    @relation(fields: [orderId], references: [id])
+  cakeId   String
+  cake     Cake     @relation(fields: [cakeId], references: [id])
+  sizeId   String
+  size     CakeSize @relation(fields: [sizeId], references: [id])
+  quantity Int
+  price    Decimal
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model TeamMember {
+  id        String  @id @default(cuid())
+  name      String
+  role      String
+  imageUrl  String
+}
+
+model SiteSetting {
+  key   String @id
+  value String
+}
+

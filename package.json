@@ -4,15 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build2": "next build",
+    "start2": "next start",
+    "start": "npm run build:css && react-scripts start",
+    "build": "npm run build:css && react-scripts build",
+    "lint": "next lint",
+    "build:css": "postcss src/styles/tailwind.scss -o src/styles/index.scss "
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.9.0",
+    "@remixicon/react": "^4.6.0",
     "@types/react-toastify": "^4.0.2",
     "axios": "^1.9.0",
+    "framer-motion": "^12.18.1",
     "next": "15.3.3",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
