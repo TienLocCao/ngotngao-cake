@@ -1,8 +1,9 @@
 // CartSidebar.tsx
 "use client";
-import React from "react";
+import React, {useState} from "react";
 import { RiCloseLine, RiSubtractLine, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
-
+import ProceedToCheckoutDialog from "@/components/public/ProceedToCheckoutDialog";
+import ViewCartDialog from "@/components/public/ViewCartDialog";
 interface CartSidebarProps {
     onClose: () => void;
 }
@@ -31,7 +32,14 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ onClose }) => {
                 "https://readdy.ai/api/search-image?query=A%20vanilla%20strawberry%20cake%20with%20fresh%20strawberries%20and%20light%20cream%20frosting.%20The%20cake%20features%20layers%20of%20fresh%20fruit%20and%20a%20light%2C%20airy%20texture&width=400&height=400&seq=15&orientation=squarish",
             price: "$39.99",
             description: "Fresh strawberries and cream",
-        }]
+    }]
+    const [dialogs, setDialogs] = useState({
+        checkout: false,
+        viewCart: false,
+    });
+    const toggleDialog = (name: keyof typeof dialogs, open: boolean) => {
+        setDialogs((prev) => ({ ...prev, [name]: open }));
+    }
     return (
         <div className="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-lg z-50 overflow-y-auto">
             <div className="p-6">
@@ -99,14 +107,17 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ onClose }) => {
                 </div>
 
                 <div className="mt-8 space-y-3">
-                    <button className="w-full py-3 px-4 bg-primary text-white font-medium rounded hover:bg-primary/90 transition">
+                    <button className="w-full py-3 px-4 bg-primary text-white font-medium rounded hover:bg-primary/90 transition" onClick={() => toggleDialog('checkout', true)}>
                         Proceed to Checkout
                     </button>
-                    <button className="w-full py-3 px-4 bg-gray-100 text-gray-800 font-medium rounded hover:bg-gray-200 transition">
+                    <button className="w-full py-3 px-4 bg-gray-100 text-gray-800 font-medium rounded hover:bg-gray-200 transition" onClick={() => toggleDialog('viewCart', true)}>
                         View Cart
                     </button>
                 </div>
             </div>
+        
+            <ProceedToCheckoutDialog isOpen={dialogs.checkout} setIsOpen={(open) => toggleDialog('checkout', open)}/>
+            <ViewCartDialog isOpen={dialogs.viewCart} setIsOpen={(open) => toggleDialog('viewCart', open)}/>
         </div>
     );
 };

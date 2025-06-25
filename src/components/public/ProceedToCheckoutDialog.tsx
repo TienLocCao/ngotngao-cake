@@ -3,18 +3,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInUp } from '@/lib/animations';
+import Dialog from '@/components/common/Dialog';
+import { RiVisaFill, RiMastercardFill, RiPaypalFill } from '@remixicon/react'
 
-
-const ProceedToCheckout = () => {
+type Props = { isOpen: boolean; setIsOpen: (open: boolean) => void };
+const ProceedToCheckoutDialog = ({isOpen, setIsOpen}: Props) => {
     return (
-        <>
+        <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} className='max-h-[90vh]'>
             <motion.section
                 id="checkout-page"
-                className="container mx-auto px-4 py-8 hidden "
-                variants={fadeInUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}>
+                className="container mx-auto px-4 py-8 "
+                >
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -143,14 +142,14 @@ const ProceedToCheckout = () => {
                                                 className="w-4 h-4 text-primary"
                                                 checked
                                             />
-                                            <label for="credit-card" className="ml-3 flex items-center">
+                                            <label htmlFor="credit-card" className="ml-3 flex items-center">
                                                 <span className="text-sm font-medium text-gray-700 mr-2"
                                                 >Credit Card</span
                                                 >
-                                                <i className="ri-visa-fill text-xl text-blue-600"></i>
-                                                <i
-                                                    className="ri-mastercard-fill text-xl text-orange-500 ml-1"
-                                                ></i>
+                                                <RiVisaFill className="ri-visa-fill text-xl text-blue-600" />
+                                                <RiMastercardFill
+                                                    className="text-xl text-orange-500 ml-1"
+                                                />
                                             </label>
                                         </div>
                                         <div className="flex items-center">
@@ -161,10 +160,10 @@ const ProceedToCheckout = () => {
                                                 value="paypal"
                                                 className="w-4 h-4 text-primary"
                                             />
-                                            <label for="paypal" className="ml-3 flex items-center">
+                                            <label htmlFor="paypal" className="ml-3 flex items-center">
                                                 <span className="text-sm font-medium text-gray-700 mr-2"
                                                 >PayPal</span>
-                                                <i className="ri-paypal-fill text-xl text-blue-500"></i>
+                                                <RiPaypalFill className=" text-xl text-blue-500" />
                                             </label>
                                         </div>
                                     </div>
@@ -314,8 +313,8 @@ const ProceedToCheckout = () => {
                 </div>
             </motion.section>
 
-        </>
+        </Dialog>
     );
 };
 
-export default ProceedToCheckout;
+export default ProceedToCheckoutDialog;

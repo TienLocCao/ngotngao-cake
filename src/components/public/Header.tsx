@@ -27,7 +27,6 @@ const Header = () => {
   const userRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -107,10 +106,11 @@ const Header = () => {
               </button>
 
               <button
-                onClick={() => setShowUser(true)}
+                onClick={() => setShowUser((prev) => { return !prev})}
                 className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-primary"
               >
                 <RiUserLine className="text-xl" />
+                {showUser && <div ref={userRef}><UserDropdown onClose={() => setShowUser(false)} /></div>}
               </button>
             </div>
 
@@ -127,7 +127,7 @@ const Header = () => {
 
       {showSearch && <div ref={searchRef}><SearchOverlay onClose={() => setShowSearch(false)} /></div>}
       {showCart && <div ref={cartRef}><CartSidebar onClose={() => setShowCart(false)} /></div>}
-      {showUser && <div ref={userRef}><UserDropdown onClose={() => setShowUser(false)} /></div>}
+      
       {showMobile && <div ref={mobileRef}  className="md:hidden"><MobileMenu navLinks={navLinks} onClose={() => setShowMobile(false)} /></div>}
     </>
   );
