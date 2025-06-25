@@ -16,6 +16,9 @@ import {
   RiTwitterXLine,
 } from '@remixicon/react';
 
+import dynamic from 'next/dynamic';
+const Map = dynamic(() => import('@/components/public/Map'), { ssr: false });
+
 const Contact = () => {
   const [charCount, setCharCount] = useState(0);
   const socialIcons = [
@@ -116,12 +119,13 @@ const Contact = () => {
               <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
                 <h3 className="text-xl font-semibold mb-6">Find Us</h3>
                 <div className="w-full h-64 rounded-xl overflow-hidden">
-                  <img
+                  {/* <img
                     src="https://public.readdy.ai/gen_page/map_placeholder_1280x720.png"
                     alt="Store Location"
                     className="w-full h-full object-cover"
                     loading="lazy"
-                  />
+                  /> */}
+                  <Map />
                 </div>
               </div>
 
