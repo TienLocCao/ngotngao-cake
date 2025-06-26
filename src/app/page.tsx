@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '@/components/public/Layout';
 import Hero from '@/components/public/Hero';
-import Category from '@/components/public/Category';
+import Category from '@/components/public/CategorySection/Category';
 import BestSeller from '@/components/public/BestSeller';
 import WhyChooseUs from '@/components/public/WhyChooseUs';
 
