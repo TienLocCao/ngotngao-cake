@@ -3,20 +3,25 @@
 import { motion } from 'framer-motion';
 import { fadeInUp } from '@/lib/animations';
 import React from 'react';
+import {
+  RiHeartLine,
+  RiShieldStarLine,
+  RiLightbulbLine 
+} from '@remixicon/react';
 
 const values = [
   {
-    icon: "ri-heart-line",
+    icon: RiHeartLine,
     title: "Passion for Quality",
     description: "We pour our hearts into every cake, using only premium ingredients and maintaining the highest standards."
   },
   {
-    icon: "ri-shield-star-line",
+    icon: RiShieldStarLine,
     title: "Customer First",
     description: "Your satisfaction is our priority. We work closely with you to create the perfect cake."
   },
   {
-    icon: "ri-creativity-line",
+    icon: RiLightbulbLine,
     title: "Creative Innovation",
     description: "We explore new designs and flavors to bring you memorable cake experiences."
   }
@@ -35,7 +40,8 @@ const Values = () => (
         {values.map((val, idx) => (
           <div key={idx} className="bg-white p-8 rounded-2xl shadow-lg text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i className={`${val.icon} text-2xl text-primary`} />
+              {/* <i className={`${val.icon} text-2xl text-primary`} /> */}
+              <val.icon className="text-2xl text-primary"/>
             </div>
             <h3 className="text-xl font-semibold mb-4">{val.title}</h3>
             <p className="text-gray-600">{val.description}</p>

@@ -7,7 +7,7 @@ import { fadeInUp } from '@/lib/animations';
 
 const Hero = () => (
   <motion.section
-    className="relative bg-gradient-to-r from-white to-secondary/10 overflow-hidden"
+    className="relative bg-gradient-to-r from-white to-secondary/10 overflow-hidden min-h-[calc(100vh - 72px)]"
     variants={fadeInUp}
     initial="hidden"
     whileInView="visible"

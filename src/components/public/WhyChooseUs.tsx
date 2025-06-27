@@ -31,13 +31,13 @@ const features = [
 const WhyChooseUs = () => {
   return (
     // <!-- Why Choose Us Section -->
-    <motion.section
+    <section
       className="py-20 bg-white"
-      variants={fadeInUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}>
-      <div className="container mx-auto px-4">
+    >
+      <motion.div className="container mx-auto px-4" variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}>
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Why Choose Us</h2>
           <p className="text-gray-600">What makes our cakes special</p>
@@ -66,8 +66,8 @@ const WhyChooseUs = () => {
 
 
         </div>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 };
 

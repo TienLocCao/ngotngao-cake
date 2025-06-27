@@ -9,10 +9,10 @@ import {
   RiUserLine,
   RiMenuLine,
 } from '@remixicon/react';
-import SearchOverlay from './Header/SearchOverlay';
-import CartSidebar from './Header/CartSidebar';
-import UserDropdown from './Header/UserDropdown';
-import MobileMenu from './Header/MobileMenu';
+import SearchOverlay from './SearchOverlay';
+import CartSidebar from './CartSidebar';
+import UserDropdown from './UserDropdown';
+import MobileMenu from './MobileMenu';
 
 const navLinks = ['Home', 'Shop', 'About', 'Contact'];
 

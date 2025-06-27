@@ -38,28 +38,28 @@ const bestSellers = [
 ];
 
 const BestSeller = () => {
-    return (
-        <motion.section
-            id="shop"
-            className="py-20 bg-gray-50"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-        >
-            <div className="container mx-auto px-4">
-                <motion.div variants={fadeIn} className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">Our Best Sellers</h2>
-                    <p className="text-gray-600">Most loved cakes by our customers</p>
-                </motion.div>
-                <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" variants={fadeIn}>
-                    {bestSellers.map((cake, index) => (
-                        <ProductCard key={index} {...cake} />
-                    ))}
-                </motion.div>
-            </div>
-        </motion.section>
-    );
+  return (
+    <section
+      id="shop"
+      className="py-20 bg-gray-50"
+
+    >
+      <motion.div className="container mx-auto px-4" variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}>
+        <motion.div variants={fadeIn} className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Our Best Sellers</h2>
+          <p className="text-gray-600">Most loved cakes by our customers</p>
+        </motion.div>
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" variants={fadeIn}>
+          {bestSellers.map((cake, index) => (
+            <ProductCard key={index} {...cake} />
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  );
 }
 
 export default BestSeller;
