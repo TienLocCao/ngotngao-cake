@@ -40,3 +40,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Remove-Item -Recurse -Force prisma\migrations
 npx prisma migrate reset
 npx prisma migrate dev --name init
+npx prisma db seed

@@ -1,37 +1,55 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import React from 'react';
 
-const ProductFilters = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+interface Props {
+  selectedCategory: string[];
+  onCategoryChange: (categories: string[]) => void;
+  selectedDiet: string[];
+  onDietChange: (diets: string[]) => void;
+  selectedPrice: string;
+  onPriceChange: (price: string) => void;
+  onSearch: (term: string) => void;
+}
 
-  const toggleParam = useCallback((key: string, value: string, isChecked: boolean) => {
-    const params = new URLSearchParams(searchParams.toString());
+const categories = ['Birthday', 'Wedding', 'Custom', 'Cupcakes'];
+// const diets = ['gluten', 'vegan', 'sugarfree', 'nutfree'];
+const prices = ['all', 'under25', '25-50', '50-100', 'over100'];
 
-    if (isChecked) {
-      params.append(key, value);
-    } else {
-      const updated = Array.from(params.getAll(key)).filter((v) => v !== value);
-      params.delete(key);
-      updated.forEach((v) => params.append(key, v));
-    }
-
-    router.push(`?${params.toString()}`, { scroll: false });
-  }, [router, searchParams]);
-
-  const isChecked = (key: string, value: string) => {
-    return searchParams.getAll(key).includes(value);
+const ProductFilters = ({
+  selectedCategory,
+  onCategoryChange,
+  selectedDiet,
+  onDietChange,
+  selectedPrice,
+  onPriceChange,
+  onSearch,
+}: Props) => {
+  const handleCheckboxChange = (
+    currentValues: string[],
+    value: string,
+    onChange: (values: string[]) => void,
+    isChecked: boolean
+  ) => {
+    const updated = isChecked
+      ? [...currentValues, value]
+      : currentValues.filter((v) => v !== value);
+    onChange(updated);
   };
-
-  const categories = ['all', 'birthday', 'wedding', 'custom', 'cupcakes'];
-  const diets = ['gluten', 'vegan', 'sugarfree', 'nutfree'];
-  const prices = ['all', 'under25', '25-50', '50-100', 'over100'];
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold mb-4">Filters</h3>
+
+      {/* Search */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search cakes..."
+          onChange={(e) => onSearch(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
 
       {/* Categories */}
       <div className="mb-6">
@@ -42,10 +60,19 @@ const ProductFilters = () => {
               <input
                 type="checkbox"
                 className="form-checkbox text-primary rounded border-gray-300"
-                checked={isChecked('category', cat)}
-                onChange={(e) => toggleParam('category', cat, e.target.checked)}
+                checked={selectedCategory.includes(cat)}
+                onChange={(e) =>
+                  handleCheckboxChange(
+                    selectedCategory,
+                    cat,
+                    onCategoryChange,
+                    e.target.checked
+                  )
+                }
               />
-              <span className="ml-2 text-gray-700 capitalize">{cat.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
+              <span className="ml-2 text-gray-700 capitalize">
+                {cat.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              </span>
             </label>
           ))}
         </div>
@@ -61,21 +88,17 @@ const ProductFilters = () => {
                 type="radio"
                 name="price"
                 className="form-radio text-primary border-gray-300"
-                checked={searchParams.get('price') === price}
-                onChange={() => {
-                  const params = new URLSearchParams(searchParams.toString());
-                  params.set('price', price);
-                  router.push(`?${params.toString()}`, { scroll: false });
-                }}
+                checked={selectedPrice === price}
+                onChange={() => onPriceChange(price)}
               />
-              <span className="ml-2 text-gray-700 capitalize">{price.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
+              <span className="ml-2 text-gray-700 capitalize">{price}</span>
             </label>
           ))}
         </div>
       </div>
 
       {/* Dietary */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h4 className="font-medium mb-3">Dietary Options</h4>
         <div className="space-y-2">
           {diets.map((diet) => (
@@ -83,18 +106,31 @@ const ProductFilters = () => {
               <input
                 type="checkbox"
                 className="form-checkbox text-primary rounded border-gray-300"
-                checked={isChecked('diet', diet)}
-                onChange={(e) => toggleParam('diet', diet, e.target.checked)}
+                checked={selectedDiet.includes(diet)}
+                onChange={(e) =>
+                  handleCheckboxChange(
+                    selectedDiet,
+                    diet,
+                    onDietChange,
+                    e.target.checked
+                  )
+                }
               />
               <span className="ml-2 text-gray-700 capitalize">{diet}</span>
             </label>
           ))}
         </div>
-      </div>
+      </div> */}
 
+      {/* Reset Button */}
       <button
-        onClick={() => router.push('?', { scroll: false })}
-        className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-sm hover:bg-gray-200 transition-all whitespace-nowrap"
+        onClick={() => {
+          onCategoryChange([]);
+          onDietChange([]);
+          onPriceChange('all');
+          onSearch('');
+        }}
+        className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-sm hover:bg-gray-200 transition-all"
       >
         Clear All Filters
       </button>

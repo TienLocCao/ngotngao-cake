@@ -3,6 +3,7 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT,
+    "password" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
 
@@ -53,14 +54,23 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
+CREATE TABLE "Badge" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Badge_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Cake" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "fullDescription" TEXT NOT NULL,
     "imageUrl" TEXT NOT NULL,
     "price" DECIMAL(65,30) NOT NULL,
     "categoryId" TEXT NOT NULL,
+    "badgeId" INTEGER,
 
     CONSTRAINT "Cake_pkey" PRIMARY KEY ("id")
 );
@@ -163,6 +173,9 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Cake" ADD CONSTRAINT "Cake_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Cake" ADD CONSTRAINT "Cake_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CakeSize" ADD CONSTRAINT "CakeSize_cakeId_fkey" FOREIGN KEY ("cakeId") REFERENCES "Cake"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

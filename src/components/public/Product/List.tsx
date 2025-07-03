@@ -1,88 +1,135 @@
 'use client';
 import { motion } from 'framer-motion';
 import { slideInFromLeft, slideInFromRight } from '@/lib/animations';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCard from './Card';
 import ProductFilters from './Filters';
 import ProductListHeader from './ListHeader';
 import Pagination from '@/components/public/ui/Pagination';
 
-export const sampleProducts = [
-  {
-    title: "Chocolate Dream",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20classic%20chocolate%20cake%20with%20rich%20chocolate%20ganache%2C%20decorated%20with%20chocolate%20shavings%20and%20fresh%20berries.%20The%20cake%20looks%20moist%20and%20decadent%20with%20a%20glossy%20finish&width=400&height=400&seq=13&orientation=squarish",
-    price: "$49.99",
-    description: "Rich chocolate layers with ganache",
-    badge: "Best Seller",
-  },
-  {
-    title: "Red Velvet",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20red%20velvet%20cake%20with%20cream%20cheese%20frosting%2C%20decorated%20with%20red%20velvet%20crumbs%20and%20white%20chocolate%20pieces.%20The%20cake%20has%20a%20striking%20red%20color%20and%20elegant%20presentation&width=400&height=400&seq=14&orientation=squarish",
-    price: "$44.99",
-    description: "Classic red velvet with cream cheese",
-    badge: "New",
-  },
-  {
-    title: "Strawberry Delight",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20vanilla%20strawberry%20cake%20with%20fresh%20strawberries%20and%20light%20cream%20frosting.%20The%20cake%20features%20layers%20of%20fresh%20fruit%20and%20a%20light%2C%20airy%20texture&width=400&height=400&seq=15&orientation=squarish",
-    price: "$39.99",
-    description: "Fresh strawberries and cream",
-  },
-  {
-    title: "Tiramisu Cake",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20tiramisu%20cake%20with%20coffee-soaked%20layers%20and%20mascarpone%20cream%2C%20dusted%20with%20cocoa%20powder.%20The%20cake%20has%20visible%20layers%20and%20an%20elegant%2C%20sophisticated%20appearance&width=400&height=400&seq=16&orientation=squarish",
-    price: "$54.99",
-    description: "Italian classic with coffee twist",
-  },
-  {
-    title: "Lemon Blueberry",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20lemon%20blueberry%20cake%20with%20light%20lemon%20buttercream%20frosting%20and%20fresh%20blueberries.%20The%20cake%20has%20a%20bright%2C%20fresh%20appearance%20with%20natural%20decorations&width=400&height=400&seq=17&orientation=squarish",
-    price: "$42.99",
-    description: "Zesty lemon with fresh blueberries",
-    badge: "New",
-  },
-  {
-    title: "Carrot Cake",
-    image:
-      "https://readdy.ai/api/search-image?query=A%20carrot%20cake%20with%20cream%20cheese%20frosting%2C%20decorated%20with%20chopped%20nuts%20and%20caramel%20drizzle.%20The%20cake%20has%20a%20rustic%2C%20homemade%20appearance%20with%20elegant%20finishing&width=400&height=400&seq=18&orientation=squarish",
-    price: "$38.99",
-    description: "Classic carrot with cream cheese",
-  },
-];
+interface Product {
+  id: string;
+  title: string;
+  image: string;
+  price: string;
+  description: string;
+  badge?: string;
+}
 
+const pageSize = 12;
 
-const ProductList = () => (
-  <section
-    className="py-12"
-  >
-    <div className="container mx-auto px-4">
-      <div className="flex flex-col lg:flex-row gap-8">
-        <motion.div className="lg:w-1/4" variants={slideInFromLeft}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}>
-          <ProductFilters />
-        </motion.div>
-        <motion.div className="lg:w-3/4" variants={slideInFromRight}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}>
-          <ProductListHeader />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleProducts.map((product, idx) => (
-              <ProductCard key={idx} {...product} />
-            ))}
-          </div>
-          <Pagination />
-        </motion.div>
+const ProductList = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState<number>(0);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedDiet, setSelectedDiet] = useState<string[]>([]);
+  const [selectedPriceRange, setSelectedPriceRange] = useState('all');
+  const [selectedSort, setSelectedSort] = useState('featured');
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const query = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: pageSize.toString(),
+        search: searchTerm,
+        price: selectedPriceRange,
+        sort: selectedSort,
+      });
+
+      selectedCategory.forEach((cat) => {
+        if (cat !== 'all') query.append('category', cat);
+      });
+
+      selectedDiet.forEach((diet) => {
+        query.append('diet', diet);
+      });
+
+      const response = await fetch(`/api/cakes?${query}`);
+      if (!response.ok) throw new Error('Failed to fetch products');
+
+      const { items, total } = await response.json();
+
+      const formattedProducts = items.map((cake: any): Product => ({
+        id: cake.id,
+        title: cake.title,
+        image: cake.imageUrl,
+        price: `${cake.price}`,
+        description: cake.description,
+        badge: cake.badge || undefined,
+      }));
+      console.log(formattedProducts)
+      setProducts(formattedProducts);
+      setTotal(total);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+      setProducts([])
+    } finally {
+      setLoading(false);
+    }
+  };
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    if (!hasMounted) {
+      setHasMounted(true);
+      fetchProducts();
+    } else {
+      fetchProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 scroll lên đầu
+    }
+  }, [currentPage, searchTerm, selectedCategory, selectedDiet, selectedPriceRange, selectedSort]);
+
+  return (
+    <section className="py-12">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <motion.div className="lg:w-1/4" variants={slideInFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <ProductFilters
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              selectedDiet={selectedDiet}
+              onDietChange={setSelectedDiet}
+              selectedPrice={selectedPriceRange}
+              onPriceChange={setSelectedPriceRange}
+              onSearch={setSearchTerm}
+            />
+          </motion.div>
+          <motion.div className="lg:w-3/4" variants={slideInFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <ProductListHeader sortValue={selectedSort} onSortChange={setSelectedSort} resultCount={total} />
+
+            {error && <p className="text-center text-red-500">{error}</p>}
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[600px]"
+            >
+            {loading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <div key={i} className="h-[300px] bg-gray-100 animate-pulse rounded"></div>
+                ))
+              : products.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+                ))}
+            </motion.div>
+            <Pagination
+              total={total}
+              pageSize={pageSize}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </motion.div>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default ProductList;

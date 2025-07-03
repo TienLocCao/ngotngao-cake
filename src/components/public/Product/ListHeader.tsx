@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { RiGridLine, RiListCheck2 } from '@remixicon/react';
 
-const sortOptions = [
+type SortOption = {
+  label: string;
+  value: string;
+};
+
+const sortOptions: SortOption[] = [
   { label: 'Featured', value: 'featured' },
   { label: 'Price: Low to High', value: 'low-to-high' },
   { label: 'Price: High to Low', value: 'high-to-low' },
@@ -12,18 +16,16 @@ const sortOptions = [
   { label: 'Best Selling', value: 'best-selling' },
 ];
 
-const ProductListHeader = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+type Props = {
+  sortValue: string;
+  onSortChange: (value: string) => void;
+  resultCount: number;
+};
 
+const ProductListHeader = ({ sortValue, onSortChange, resultCount }: Props) => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('sort', value);
-    router.push(`?${params.toString()}`, { scroll: false });
+    onSortChange(e.target.value);
   };
-
-  const currentSort = searchParams.get('sort') || 'featured';
 
   return (
     <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
@@ -32,7 +34,7 @@ const ProductListHeader = () => {
         <select
           className="border border-gray-200 rounded-sm px-3 py-2 bg-white text-gray-700 pr-8"
           onChange={handleSortChange}
-          value={currentSort}
+          value={sortValue}
         >
           {sortOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -43,7 +45,7 @@ const ProductListHeader = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-gray-600">24 products</span>
+        <span className="text-gray-600">{resultCount} products</span>
         <div className="flex gap-2">
           <button className="w-10 h-10 flex items-center justify-center rounded-sm bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
             <RiGridLine />
