@@ -6,15 +6,15 @@ import { motion } from 'framer-motion';
 import { fadeInUp } from '@/lib/animations';
 
 const Hero = () => (
-  <motion.section
+  <section
     className="relative bg-gradient-to-r from-white to-secondary/10 overflow-hidden min-h-[calc(100vh - 72px)]"
-    variants={fadeInUp}
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true }}
-    >
-    <div className="container mx-auto px-4 py-20 flex flex-col md:flex-row items-center">
-      <div className="md:w-1/2 z-10">
+
+  >
+    <motion.div className="container mx-auto px-4 py-20 flex flex-col md:flex-row items-center" variants={fadeInUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}>
+      <div className="md:w-1/2 z-10 pr-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
           Delicious Cakes for Every Special Moment
         </h1>
@@ -34,8 +34,8 @@ const Hero = () => (
           loading="lazy"
         />
       </div>
-    </div>
-  </motion.section>
+    </motion.div>
+  </section>
 );
 
 export default Hero;

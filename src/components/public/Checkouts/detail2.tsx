@@ -1,15 +1,11 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import Dialog from '@/components/common/Dialog';
 import { RiVisaFill, RiMastercardFill, RiPaypalFill } from '@remixicon/react';
-// import { useCart } from '@/lib/useCart2';
 import { useCart } from '@/lib/context/CartContext';
+import PaymentMethodForm from './PaymentMethodForm';
 
-type Props = { isOpen: boolean; setIsOpen: (open: boolean) => void };
-
-const ProceedToCheckoutDialog = ({ isOpen, setIsOpen }: Props) => {
+const CheckoutsDetail = () => {
     const { cartItems } = useCart();
 
     const subtotal = cartItems.reduce(
@@ -21,8 +17,7 @@ const ProceedToCheckoutDialog = ({ isOpen, setIsOpen }: Props) => {
     const total = subtotal + shipping + tax;
 
     return (
-        <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} className="max-h-[90vh]">
-            <motion.section id="checkout-page" className="container mx-auto px-4 py-8">
+            <section id="checkout-page" className="container mx-auto">
                 <div className="max-w-[90vw] mx-auto">
                     <h1 className="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -219,14 +214,15 @@ const ProceedToCheckoutDialog = ({ isOpen, setIsOpen }: Props) => {
                                     </div>
                                 </form>
                             </div>
+                        <PaymentMethodForm />
                         </div>
 
                         {/* RIGHT - ORDER SUMMARY */}
                         <div className="space-y-8">
-                            <div className="bg-white rounded-lg shadow-sm p-6">
-                                <h2 className="text-lg font-semibold text-gray-800 mb-6">Order Summary</h2>
+                            <div className="bg-white rounded-lg shadow-sm">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-6  p-6">Order Summary</h2>
 
-                                <div className="space-y-4 h-[calc(100vh-410px)] min-h-[400px] overflow-auto">
+                                <div className="space-y-4 h-[calc(100vh-410px)] min-h-[400px] overflow-auto  p-6">
                                     {cartItems.map((item) => (
                                         <div
                                             key={`${item.id}-${item.sizeId}`}
@@ -251,7 +247,7 @@ const ProceedToCheckoutDialog = ({ isOpen, setIsOpen }: Props) => {
                                     ))}
                                 </div>
 
-                                <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
+                                <div className="mt-6 pt-6 border-t border-gray-200 space-y-3  p-6">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">Subtotal</span>
                                         <span className="text-gray-800 font-medium">${subtotal.toLocaleString('vi-VN')}</span>
@@ -280,9 +276,8 @@ const ProceedToCheckoutDialog = ({ isOpen, setIsOpen }: Props) => {
                         </div>
                     </div>
                 </div>
-            </motion.section>
-        </Dialog>
+            </section>
     );
 };
 
-export default ProceedToCheckoutDialog;
+export default CheckoutsDetail;

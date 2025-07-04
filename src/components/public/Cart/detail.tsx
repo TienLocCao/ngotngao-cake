@@ -1,6 +1,6 @@
+// app/cart/page.tsx
 'use client';
 import React, { useEffect } from 'react';
-import Dialog from '@/components/common/Dialog';
 import { useCart } from '@/lib/context/CartContext';
 import {
   RiAddLine,
@@ -8,14 +8,12 @@ import {
   RiDeleteBinLine,
 } from '@remixicon/react';
 
-type Props = { isOpen: boolean; setIsOpen: (open: boolean) => void };
-
-const ViewCartDialog = ({ isOpen, setIsOpen }: Props) => {
+const CartDetail = () => {
   const { cartItems, updateQuantity, removeItem, refresh } = useCart();
 
   useEffect(() => {
-    if (isOpen) refresh();
-  }, [isOpen]);
+    refresh(); // Refresh khi vào page
+  }, []);
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -26,13 +24,12 @@ const ViewCartDialog = ({ isOpen, setIsOpen }: Props) => {
   const total = subtotal + shipping + tax;
 
   return (
-    <Dialog isOpen={isOpen} onClose={() => setIsOpen(false)} className="max-h-[90vh]">
-      <section id="cart-page" className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">Shopping Cart</h1>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <div className="divide-y divide-gray-200 h-[calc(100vh-410px)] min-h-[400px] overflow-auto">
+    <section id="cart-page" className="container mx-auto">
+      <div className="container mx-auto px-4">
+        {/* <h1 className="text-3xl font-bold text-gray-800 mb-8">Shopping Cart</h1> */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="bg-white rounded-lg shadow-sm p-6 col-span-1 lg:col-span-2 h-[calc(100vh-280px)] min-h-[500px] overflow-auto">
+            <div className="divide-y divide-gray-200 ">
               {cartItems.length === 0 && (
                 <p className="text-gray-500 text-center py-8">Your cart is empty.</p>
               )}
@@ -102,21 +99,21 @@ const ViewCartDialog = ({ isOpen, setIsOpen }: Props) => {
                 <div className="pt-3 mt-3 border-t border-gray-200 flex justify-between">
                   <span className="text-base font-semibold text-gray-900">Total</span>
                   <span className="text-base font-semibold text-gray-900">
-                    {total.toLocaleString('vi-VN')}
+                    {total.toLocaleString('vi-VN')} ₫
                   </span>
                 </div>
               </div>
             </div>
             <button
               className="w-full py-3 px-4 bg-primary text-white font-medium rounded hover:bg-primary/90 transition"
-              onClick={() => alert('Proceed to checkout')}
+              onClick={() => window.location.href = '/checkouts'}
             >
               Proceed to Checkout
             </button>
           </div>
         </div>
-      </section>
-    </Dialog>
+      </div>
+    </section>
   );
 };
 
@@ -127,4 +124,4 @@ const SummaryRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-export default ViewCartDialog;
+export default CartDetail;

@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "OrderStatus" AS ENUM ('pending', 'paid', 'shipped', 'delivered', 'canceled');
+
+-- CreateEnum
+CREATE TYPE "PaymentMethod" AS ENUM ('cod', 'momo', 'bank_transfer', 'credit_card', 'paypal');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -6,6 +12,8 @@ CREATE TABLE "User" (
     "password" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -104,7 +112,13 @@ CREATE TABLE "Order" (
     "userId" TEXT NOT NULL,
     "totalPrice" DECIMAL(65,30) NOT NULL,
     "status" TEXT NOT NULL,
+    "paymentMethod" "PaymentMethod" NOT NULL DEFAULT 'cod',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "receiverName" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "postalCode" TEXT NOT NULL,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );

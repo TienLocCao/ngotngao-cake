@@ -33,7 +33,7 @@ async function main() {
             title: "Chocolate Dream",
             imageUrl:
                 "https://readdy.ai/api/search-image?query=A%20classic%20chocolate%20cake%20with%20rich%20chocolate%20ganache%2C%20decorated%20with%20chocolate%20shavings%20and%20fresh%20berries.%20The%20cake%20looks%20moist%20and%20decadent%20with%20a%20glossy%20finish&width=400&height=400&seq=13&orientation=squarish",
-            price: 49.99,
+            price: 1000000,
             description: "Rich chocolate layers with ganache",
             fullDescription: "", categoryId: birthdayCategory.id,
             badgeId: bestSellerBadge.id
@@ -93,37 +93,37 @@ async function main() {
     {
       title: 'Chocolate Dream',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20classic%20chocolate%20cake%20with%20rich%20chocolate%20ganache%2C%20decorated%20with%20chocolate%20shavings%20and%20fresh%20berries.%20The%20cake%20looks%20moist%20and%20decadent%20with%20a%20glossy%20finish&width=400&height=400&seq=13&orientation=squarish",
-      price: 49.99,
+      price: 1000000,
       description: 'Rich chocolate layers with ganache',
     },
     {
       title: 'Red Velvet',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20red%20velvet%20cake%20with%20cream%20cheese%20frosting%2C%20decorated%20with%20red%20velvet%20crumbs%20and%20white%20chocolate%20pieces.%20The%20cake%20has%20a%20striking%20red%20color%20and%20elegant%20presentation&width=400&height=400&seq=14&orientation=squarish",
-      price: 44.99,
+      price: 1000000,
       description: 'Classic red velvet with cream cheese',
     },
     {
       title: 'Strawberry Delight',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20vanilla%20strawberry%20cake%20with%20fresh%20strawberries%20and%20light%20cream%20frosting.%20The%20cake%20features%20layers%20of%20fresh%20fruit%20and%20a%20light%2C%20airy%20texture&width=400&height=400&seq=15&orientation=squarish",
-      price: 39.99,
+      price: 1000000,
       description: 'Fresh strawberries and cream',
     },
     {
       title: 'Tiramisu Cake',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20tiramisu%20cake%20with%20coffee-soaked%20layers%20and%20mascarpone%20cream%2C%20dusted%20with%20cocoa%20powder.%20The%20cake%20has%20visible%20layers%20and%20an%20elegant%2C%20sophisticated%20appearance&width=400&height=400&seq=16&orientation=squarish",
-      price: 54.99,
+      price: 1000000,
       description: 'Italian classic with coffee twist',
     },
     {
       title: 'Lemon Blueberry',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20lemon%20blueberry%20cake%20with%20light%20lemon%20buttercream%20frosting%20and%20fresh%20blueberries.%20The%20cake%20has%20a%20bright%2C%20fresh%20appearance%20with%20natural%20decorations&width=400&height=400&seq=17&orientation=squarish",
-      price: 42.99,
+      price: 1000000,
       description: 'Zesty lemon with fresh blueberries',
     },
     {
       title: 'Carrot Cake',
       imageUrl: "https://readdy.ai/api/search-image?query=A%20carrot%20cake%20with%20cream%20cheese%20frosting%2C%20decorated%20with%20chopped%20nuts%20and%20caramel%20drizzle.%20The%20cake%20has%20a%20rustic%2C%20homemade%20appearance%20with%20elegant%20finishing&width=400&height=400&seq=18&orientation=squarish",
-      price: 38.99,
+      price: 1000000,
       description: 'Classic carrot with cream cheese',
     },
   ];
@@ -136,7 +136,7 @@ async function main() {
     cakes.push({
       title: `${base.title} ${i + 1}`,
       imageUrl: base.imageUrl,
-      price: base.price + (Math.random() * 20 - 10), // ±10
+      price: `${Math.floor(Math.random() * 10)}00000`, // ±10
       description: base.description,
       fullDescription: 'This is a seeded full description for cake.',
       categoryId: birthdayCategory?.id!,

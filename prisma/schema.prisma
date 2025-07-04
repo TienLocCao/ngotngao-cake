@@ -8,33 +8,36 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  name           String?
-  email          String?  @unique
-  password String?
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
 
   // ➕ Thêm 2 dòng này để fix lỗi:
-  cartItems      CartItem[]
-  orders         Order[]
+  cartItems CartItem[]
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id])
 
@@ -59,66 +62,91 @@ model VerificationToken {
 }
 
 model Category {
-  id    String  @id @default(cuid())
+  id    String @id @default(cuid())
   name  String
   cakes Cake[]
 }
 
 model Badge {
-  id    Int     @id @default(autoincrement())
+  id    Int    @id @default(autoincrement())
   name  String
   cakes Cake[]
 }
 
 model Cake {
-  id              String     @id @default(cuid())
-  title            String
+  id              String   @id @default(cuid())
+  title           String
   description     String
   fullDescription String
   imageUrl        String
   price           Decimal
   categoryId      String
-  category        Category   @relation(fields: [categoryId], references: [id])
+  category        Category @relation(fields: [categoryId], references: [id])
 
-  badgeId     Int?     
-  badge       Badge?   @relation(fields: [badgeId], references: [id])
+  badgeId Int?
+  badge   Badge? @relation(fields: [badgeId], references: [id])
 
-  sizes           CakeSize[]
-  cartItems       CartItem[]
-  orderItems      OrderItem[]
+  sizes      CakeSize[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 }
 
 model CakeSize {
-  id        String   @id @default(cuid())
-  sizeLabel String   // e.g., Small, Medium, Large
-  servings  String   // e.g., 6-8 servings
-  price     Decimal
-  cakeId    String
-  cake      Cake     @relation(fields: [cakeId], references: [id])
-  cartItems CartItem[]
+  id         String      @id @default(cuid())
+  sizeLabel  String // e.g., Small, Medium, Large
+  servings   String // e.g., 6-8 servings
+  price      Decimal
+  cakeId     String
+  cake       Cake        @relation(fields: [cakeId], references: [id])
+  cartItems  CartItem[]
   orderItems OrderItem[]
 }
 
 model CartItem {
-  id       String   @id @default(cuid())
-  userId   String
-  user     User     @relation(fields: [userId], references: [id])
-  cakeId   String
-  cake     Cake     @relation(fields: [cakeId], references: [id])
-  sizeId   String
-  size     CakeSize @relation(fields: [sizeId], references: [id])
-  quantity Int
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cakeId    String
+  cake      Cake     @relation(fields: [cakeId], references: [id])
+  sizeId    String
+  size      CakeSize @relation(fields: [sizeId], references: [id])
+  quantity  Int
   createdAt DateTime @default(now())
 }
 
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  delivered
+  canceled
+}
+
+enum PaymentMethod {
+  cod // Thanh toán khi nhận hàng
+  momo // Ví MoMo
+  bank_transfer // Chuyển khoản ngân hàng
+  credit_card // Thẻ tín dụng
+  paypal // PayPal nếu dùng
+}
+
 model Order {
-  id         String      @id @default(cuid())
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  totalPrice Decimal
-  status     String      // pending, paid, delivered, etc.
-  createdAt  DateTime    @default(now())
-  items      OrderItem[]
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  totalPrice    Decimal
+  status        String // pending, paid, delivered, etc.
+  paymentMethod PaymentMethod @default(cod)
+  createdAt     DateTime      @default(now())
+
+  // Thông tin giao hàng
+  receiverName String
+  phone        String
+  address      String
+  city         String
+  postalCode   String
+
+  items OrderItem[]
 }
 
 model OrderItem {
@@ -142,14 +170,13 @@ model Message {
 }
 
 model TeamMember {
-  id        String  @id @default(cuid())
-  name      String
-  role      String
-  imageUrl  String
+  id       String @id @default(cuid())
+  name     String
+  role     String
+  imageUrl String
 }
 
 model SiteSetting {
   key   String @id
   value String
 }
-

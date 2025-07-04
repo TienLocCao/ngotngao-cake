@@ -4,56 +4,44 @@ import Button from '@/components/public/ui/Button';
 import CakeSizeDialog from './CakeSizeDialog';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
-import { CartItem, getCartItems, addToCartLocal } from '@/lib/card';
+// import { CartItem, getCartItems, addToCartLocal } from '@/lib/cart';
+
+import { CartItem } from '@/lib/cart';
+import { useCart } from '@/lib/context/CartContext';
 
 interface ProductCardProps {
   id: string;
   title: string;
   image: string;
-  price: string;
+  price: number;
   description: string;
   badge?: string;
 }
 
 const ProductCard = ({ id, title, image, price, description, badge }: ProductCardProps) => {
- 
+ const { addToCart, refresh } = useCart();
   const { data: session } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>('medium');
 
   const handleAddToCart = () => {
-    toast.success(`${title} (${selectedSize}) added to cart!`);
-    setDialogOpen(false);
-    const item = {
-      id, title, image, price, description, badge,
+    const item: CartItem = {
+      id,
+      title,
+      image,
+      price,
       sizeId: selectedSize,
       quantity: 1,
-    }
+    };
 
-    if (session?.user?.id) {
-      addToCartDB(item);
-    } else {
-      addToCartLocal(item);
-    }
+    addToCart(item); // 
+    toast.success(`${title} (${selectedSize}) added to cart!`);
+    setDialogOpen(false);
   };
-
-   const addToCartDB = async (item: CartItem) => {
-      await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item),
-      });
-    }
 
   useEffect(() => {
     if (session?.user?.id) {
-       const localCart = getCartItems();
-      if (localCart.length > 0) {
-        localCart.forEach(async (item: CartItem) => {
-          await addToCartDB(item);
-        });
-        localStorage.removeItem('cart'); 
-      }
+      refresh(); 
     }
   }, [session]);
 
@@ -74,7 +62,7 @@ const ProductCard = ({ id, title, image, price, description, badge }: ProductCar
           {description}
         </p>
           <div className="flex justify-between items-center">
-          <span className="text-xl font-bold text-primary">{price}</span>
+          <span className="text-xl font-bold text-primary">{(+price).toLocaleString('vi-VN')}</span>
         </div>
       </div>
       </div>

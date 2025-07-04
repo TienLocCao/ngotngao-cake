@@ -11,7 +11,7 @@ interface Product {
   id: string;
   title: string;
   image: string;
-  price: string;
+  price: number;
   description: string;
   badge?: string;
 }
@@ -59,7 +59,7 @@ const ProductList = () => {
         id: cake.id,
         title: cake.title,
         image: cake.imageUrl,
-        price: `${cake.price}`,
+        price: cake.price,
         description: cake.description,
         badge: cake.badge || undefined,
       }));

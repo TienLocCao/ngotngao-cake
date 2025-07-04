@@ -13,10 +13,13 @@ import SearchOverlay from './SearchOverlay';
 import CartSidebar from './CartSidebar';
 import UserDropdown from './UserDropdown';
 import MobileMenu from './MobileMenu';
+// import { useCart } from '@/lib/useCart';
+import { useCart } from '@/lib/context/CartContext';
 
 const navLinks = ['Home', 'Shop', 'About', 'Contact'];
 
 const Header = () => {
+  const { cartItems, refresh  } = useCart();
   const [showSearch, setShowSearch] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showUser, setShowUser] = useState(false);
@@ -27,6 +30,12 @@ const Header = () => {
   const userRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  useEffect(() => {
+    if (!showCart) {
+      refresh();
+    }
+  }, [showCart]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -101,7 +110,7 @@ const Header = () => {
               >
                 <RiShoppingCartLine className="text-xl" />
                 <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  3
+                  {cartItems.length}
                 </span>
               </button>
 
