@@ -6,6 +6,8 @@ import ProductCard from './Card';
 import ProductFilters from './Filters';
 import ProductListHeader from './ListHeader';
 import Pagination from '@/components/public/ui/Pagination';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 
 interface Product {
   id: string;
@@ -13,7 +15,8 @@ interface Product {
   image: string;
   price: number;
   description: string;
-  badge?: string;
+  badgeName?: string;
+  sizes: { id: string; sizeLabel: string; price: any }[];
 }
 
 const pageSize = 12;
@@ -61,7 +64,8 @@ const ProductList = () => {
         image: cake.imageUrl,
         price: cake.price,
         description: cake.description,
-        badge: cake.badge || undefined,
+        badgeName: cake.badge.name || undefined,
+        sizes: cake.sizes
       }));
       console.log(formattedProducts)
       setProducts(formattedProducts);
@@ -74,15 +78,42 @@ const ProductList = () => {
       setLoading(false);
     }
   };
-  const [hasMounted, setHasMounted] = useState(false);
+  const router = useRouter();
+
+  const updateQueryParams = () => {
+    const query = new URLSearchParams();
+
+    if (searchTerm) query.set('search', searchTerm);
+    if (selectedPriceRange !== 'all') query.set('price', selectedPriceRange);
+    if (selectedSort !== 'featured') query.set('sort', selectedSort);
+    if (currentPage !== 1) query.set('page', currentPage.toString());
+
+    selectedCategory.forEach(cat => query.append('category', cat));
+    selectedDiet.forEach(diet => query.append('diet', diet));
+
+    router.push(`?${query.toString()}`);
+  };
+
+  const searchParams = useSearchParams();
   useEffect(() => {
-    if (!hasMounted) {
-      setHasMounted(true);
-      fetchProducts();
-    } else {
-      fetchProducts();
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 scroll lên đầu
-    }
+    console.log("searchParams", searchParams)
+    const pageParam = parseInt(searchParams.get('page') || '1');
+    setCurrentPage(pageParam);
+    setSearchTerm(searchParams.get('search') || '');
+    setSelectedPriceRange(searchParams.get('price') || 'all');
+    setSelectedSort(searchParams.get('sort') || 'featured');
+
+    const categories = searchParams.getAll('category');
+    if (categories.length) setSelectedCategory(categories);
+
+    const diets = searchParams.getAll('diet');
+    if (diets.length) setSelectedDiet(diets);
+  }, []);
+
+  useEffect(() => {
+    updateQueryParams();
+    fetchProducts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, searchTerm, selectedCategory, selectedDiet, selectedPriceRange, selectedSort]);
 
   return (

@@ -15,14 +15,15 @@ interface ProductCardProps {
   image: string;
   price: number;
   description: string;
-  badge?: string;
+  badgeName?: string;
+  sizes: { id: string; sizeLabel: string; price: any }[];
 }
 
-const ProductCard = ({ id, title, image, price, description, badge }: ProductCardProps) => {
+const ProductCard = ({ id, title, image, price, description, badgeName, sizes }: ProductCardProps) => {
  const { addToCart, refresh } = useCart();
   const { data: session } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState<string>('medium');
+  const [selectedSize, setSelectedSize] = useState<string>(sizes[0]?.id || '');
 
   const handleAddToCart = () => {
     const item: CartItem = {
@@ -52,10 +53,10 @@ const ProductCard = ({ id, title, image, price, description, badge }: ProductCar
         <div className="p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold">{title}</h3>
-            {badge && (
+            {badgeName && (
               <span
               className="text-sm bg-primary/10 text-primary px-2 py-1 rounded-full"
-            >{badge}</span>
+            >{badgeName}</span>
             )}
           </div>
         <p className="text-gray-600 mb-4 text-sm">
@@ -74,11 +75,7 @@ const ProductCard = ({ id, title, image, price, description, badge }: ProductCar
         onSelectSize={setSelectedSize}
         onClose={() => setDialogOpen(false)}
         onConfirm={handleAddToCart}
-        CAKE_SIZES={[
-          { value: 'small', label: 'Small (6 inches)' },
-          { value: 'medium', label: 'Medium (8 inches)' },
-          { value: 'large', label: 'Large (10 inches)' },
-        ]}
+        CAKE_SIZES={sizes}
       />
     </>
   );

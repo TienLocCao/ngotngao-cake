@@ -1,6 +1,6 @@
 // app/cart/page.tsx
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Layout from '@/components/public/Layout';
 import CheckoutsDetail from '@/components/public/Checkouts/detail';
 
@@ -8,11 +8,6 @@ const ViewCartPage = () => {
 
   return (
     <Layout>
-      {/* <section className="bg-gradient-to-b from-secondary/10 to-white pt-16 pb-6">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-4">Checkout</h1>
-        </div>
-      </section> */}
        <CheckoutsDetail />
     </Layout>
   );

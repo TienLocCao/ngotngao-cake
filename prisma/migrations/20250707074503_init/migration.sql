@@ -109,7 +109,7 @@ CREATE TABLE "CartItem" (
 -- CreateTable
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "userId" TEXT,
     "totalPrice" DECIMAL(65,30) NOT NULL,
     "status" TEXT NOT NULL,
     "paymentMethod" "PaymentMethod" NOT NULL DEFAULT 'cod',
@@ -117,8 +117,9 @@ CREATE TABLE "Order" (
     "receiverName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "city" TEXT NOT NULL,
-    "postalCode" TEXT NOT NULL,
+    "province" TEXT NOT NULL,
+    "district" TEXT NOT NULL,
+    "ward" TEXT NOT NULL,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
@@ -204,7 +205,7 @@ ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_cakeId_fkey" FOREIGN KEY ("cakeI
 ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_sizeId_fkey" FOREIGN KEY ("sizeId") REFERENCES "CakeSize"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

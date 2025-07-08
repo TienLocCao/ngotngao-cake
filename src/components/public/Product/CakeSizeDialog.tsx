@@ -7,7 +7,7 @@ type Props = {
   onSelectSize: (value: string) => void;
   onClose: () => void;
   onConfirm: () => void;
-  CAKE_SIZES: { value: string; label: string }[];
+  CAKE_SIZES: { id: string; sizeLabel: string,price: any }[];
 }
 
 const CakeSizeDialog = ({
@@ -39,12 +39,12 @@ const CakeSizeDialog = ({
                 <label key={size.value} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
-                    value={size.value}
-                    checked={selectedSize === size.value}
+                    value={size.id}
+                    checked={selectedSize === size.id}
                     onChange={(e) => onSelectSize(e.target.value)}
                     className="accent-pink-500"
                   />
-                  <span>{size.label}</span>
+                  <span>{size.sizeLabel}</span>
                 </label>
               ))}
             </div>

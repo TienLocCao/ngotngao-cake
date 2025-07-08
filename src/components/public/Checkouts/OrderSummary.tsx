@@ -2,7 +2,11 @@
 import React from 'react';
 import { useCart } from '@/lib/context/CartContext';
 
-const OrderSummary = () => {
+type Props = {
+  handleSubmitOrder: () => Promise<void>,
+}
+
+const OrderSummary = ({handleSubmitOrder}: Props) => {
   const { cartItems } = useCart();
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 30000;
@@ -33,7 +37,7 @@ const OrderSummary = () => {
         </div>
       </div>
       <div className="px-6">
-        <button className="w-full py-3 bg-primary text-white rounded hover:bg-primary/90 transition">
+        <button className="w-full py-3 bg-primary text-white rounded hover:bg-primary/90 transition" onClick={handleSubmitOrder}>
           Đặt hàng
         </button>
       </div>

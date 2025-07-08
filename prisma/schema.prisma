@@ -132,8 +132,8 @@ enum PaymentMethod {
 
 model Order {
   id            String        @id @default(cuid())
-  userId        String
-  user          User          @relation(fields: [userId], references: [id])
+  userId        String?
+  user          User?          @relation(fields: [userId], references: [id])
   totalPrice    Decimal
   status        String // pending, paid, delivered, etc.
   paymentMethod PaymentMethod @default(cod)
@@ -143,8 +143,9 @@ model Order {
   receiverName String
   phone        String
   address      String
-  city         String
-  postalCode   String
+  province    String
+  district    String
+  ward        String
 
   items OrderItem[]
 }

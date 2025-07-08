@@ -30,6 +30,19 @@ export async function GET(req: Request) {
     };
   }
 
+  if (sort === 'best-selling' || sort === 'newest') {
+    const badgeMap: Record<string, string> = {
+      'best-selling': 'Best Seller',
+      'newest': 'New',
+    };
+    where.badge = {
+      name: {
+        equals: badgeMap[sort],
+        mode: 'insensitive',
+      },
+    };
+  }
+
   // ✅ Multi-dietary support
   // if (diets.length > 0) {
   //   where.dietary = {
@@ -59,12 +72,6 @@ export async function GET(req: Request) {
     case 'high-to-low':
       orderBy = { price: 'desc' };
       break;
-    case 'newest':
-      orderBy = { createdAt: 'desc' };
-      break;
-    case 'best-selling':
-      orderBy = { sold: 'desc' };
-      break;
     default:
       orderBy = {};
   }
@@ -79,6 +86,7 @@ export async function GET(req: Request) {
         include: {
           category: true,
           sizes: true,
+          badge: true,
         },
       }),
       prisma.cake.count({ where }),
