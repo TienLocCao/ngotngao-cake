@@ -5,7 +5,7 @@ import {
   RiBankLine,
   RiWallet3Line,
 } from '@remixicon/react';
-type PaymentMethod = 'cod' | 'bank' | 'momo';
+type PaymentMethod = 'cod' | 'bank_transfer' | 'momo';
 
 interface Props {
   selectedMethod: string;
@@ -46,9 +46,9 @@ const PaymentMethodForm = ({ selectedMethod, setSelectedMethod }: Props) => {
           <input
             type="radio"
             name="paymentMethod"
-            value="bank"
-            checked={selectedMethod === 'bank'}
-            onChange={() => setSelectedMethod('bank')}
+            value="bank_transfer"
+            checked={selectedMethod === 'bank_transfer'}
+            onChange={() => setSelectedMethod('bank_transfer')}
             className="mt-1 w-5 h-5 text-primary"
           />
           <div>

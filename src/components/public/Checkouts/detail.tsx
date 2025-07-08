@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import {useCart} from '@/lib/context/CartContext'
 import { toast } from 'react-toastify';
 
-type PaymentMethod = 'cod' | 'bank' | 'momo';
+type PaymentMethod = 'cod' | 'bank_transfer' | 'momo';
 
 const CheckoutsDetail = () => {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod');
@@ -28,47 +28,55 @@ const CheckoutsDetail = () => {
   const { cartItems, removeAllItem } = useCart(); // từ context
   const router = useRouter();
 
-    const handleSubmitOrder = async () => {
-    try {
-      const items = cartItems.map((item) => ({
-        cakeId: item.id,
-        sizeId: item.sizeId,
-        quantity: item.quantity,
-        price: item.price,
-      }));
+  const handleSubmitOrder = async () => {
+  try {
+    const items = cartItems.map((item) => ({
+      cakeId: item.id,
+      sizeId: item.sizeId,
+      quantity: item.quantity,
+      price: item.price,
+    }));
 
-      const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-      const payload = {
-        userId: 'current_user_id', // hoặc để BE lấy từ session
-        totalPrice,
-        paymentMethod: selectedMethod,
-        status: 'pending',
-        receiverName: shippingInfo.receiverName,
-        phone: contactInfo.phone,
-        address: shippingInfo.address,
-        province: shippingInfo.province,
-        district: shippingInfo.district,
-        ward: shippingInfo.ward,
-        cartItems,
-      };
-      console.log("payload", payload)
-      const res = await fetch('/api/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+    const payload = {
+      userId: '', // hoặc để BE lấy từ session
+      totalPrice,
+      paymentMethod: selectedMethod,
+      status: 'pending',
+      receiverName: shippingInfo.receiverName,
+      phone: contactInfo.phone,
+      address: shippingInfo.address,
+      province: shippingInfo.province,
+      district: shippingInfo.district,
+      ward: shippingInfo.ward,
+      cartItems,
+    };
 
-      if (!res.ok) throw new Error('Tạo đơn hàng thất bại');
-      toast.success(`Tạo đơn hàng thành công!`);
-      removeAllItem();
-      // Thành công
+    const res = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.message || 'Tạo đơn hàng thất bại');
+    
+    if (selectedMethod === 'bank_transfer' && result.paymentInfo) {
+      // 👉 Gửi sang trang hướng dẫn chuyển khoản
+      router.push(
+        `/checkouts/payment-info?orderId=${result.order.id}&bankName=${result.paymentInfo.bankName}&accountNumber=${result.paymentInfo.accountNumber}&accountName=${result.paymentInfo.accountName}&content=${result.paymentInfo.content}`
+      );
+    } else {
       router.push('/shop');
-    } catch (err) {
-      toast.success(`Lỗi khi tạo đơn hàng:`);
-      console.error('Lỗi khi tạo đơn hàng:', err);
+      removeAllItem();
     }
-  };
+  } catch (err) {
+    toast.error('Lỗi khi tạo đơn hàng!');
+  }
+};
+
 
   return (
     <section id="checkout-page" className="container mx-auto py-8">
@@ -78,7 +86,7 @@ const CheckoutsDetail = () => {
           <ContactForm  contactInfo={contactInfo} setContactInfo={setContactInfo} />
           <ShippingAddressForm  shippingInfo={shippingInfo} setShippingInfo={setShippingInfo}/>
           <PaymentMethodForm selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} />
-          {selectedMethod === 'bank' && <CreditCardForm />}
+          {selectedMethod === 'bank_transfer' && <CreditCardForm />}
         </div>
 
         {/* RIGHT */}
