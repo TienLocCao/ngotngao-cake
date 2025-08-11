@@ -3,15 +3,19 @@
 import React from 'react';
 import { RiGridLine, RiListCheck2 } from '@remixicon/react';
 
-type SortOption = {
+type Option = {
   label: string;
   value: string;
 };
 
-const sortOptions: SortOption[] = [
+const sortOptions: Option[] = [
   { label: 'Featured', value: 'featured' },
   { label: 'Price: Low to High', value: 'low-to-high' },
   { label: 'Price: High to Low', value: 'high-to-low' },
+];
+
+const statusOptions: Option[] = [
+  { label: '', value: 'All Status' },
   { label: 'Newest', value: 'newest' },
   { label: 'Best Selling', value: 'best-selling' },
 ];
@@ -19,30 +23,52 @@ const sortOptions: SortOption[] = [
 type Props = {
   sortValue: string;
   onSortChange: (value: string) => void;
+  statusValue: string;
+  onStatusChange: (value: string) => void;
   resultCount: number;
 };
 
-const ProductListHeader = ({ sortValue, onSortChange, resultCount }: Props) => {
+const ProductListHeader = ({ sortValue, onSortChange, statusValue, onStatusChange, resultCount }: Props) => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onSortChange(e.target.value);
+  };
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onStatusChange(e.target.value);
   };
 
   return (
     <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
       <div className="flex items-center gap-2">
-        <span className="text-gray-600">Sort by:</span>
-        <select
-          className="border border-gray-200 rounded-sm px-3 py-2 bg-white text-gray-700 pr-8"
-          onChange={handleSortChange}
-          value={sortValue}
-        >
-          {sortOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <div>
+          <span className="text-gray-600">Sort by:</span>
+          <select
+            className="border border-gray-200 rounded-sm px-3 py-2 bg-white text-gray-700 pr-8"
+            onChange={handleSortChange}
+            value={sortValue}
+          >
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <span className="text-gray-600">Status:</span>
+          <select
+            className="border border-gray-200 rounded-sm px-3 py-2 bg-white text-gray-700 pr-8"
+            onChange={handleStatusChange}
+            value={statusValue}
+          >
+            {statusOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
 
       <div className="flex items-center gap-4">
         <span className="text-gray-600">{resultCount} products</span>

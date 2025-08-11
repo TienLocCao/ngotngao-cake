@@ -114,19 +114,19 @@ async function main() {
       {
         cakeId: cake.id,
         sizeLabel: 'Small',
-        price: cake.price,
+        price: (+cake.price),
         servings: '4-6',
       },
       {
         cakeId: cake.id,
         sizeLabel: 'Medium',
-        price: cake.price + 50000,
+        price: (+cake.price) + 50000,
         servings: '6-8',
       },
       {
         cakeId: cake.id,
         sizeLabel: 'Large',
-        price: cake.price + 100000,
+        price: (+cake.price)+ 100000,
         servings: '8-12',
       },
     ]);

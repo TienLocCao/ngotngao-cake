@@ -33,6 +33,7 @@ const ProductList = () => {
   const [selectedDiet, setSelectedDiet] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [selectedSort, setSelectedSort] = useState('featured');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -43,6 +44,7 @@ const ProductList = () => {
         search: searchTerm,
         price: selectedPriceRange,
         sort: selectedSort,
+        status: selectedStatus,
       });
 
       selectedCategory.forEach((cat) => {
@@ -87,6 +89,7 @@ const ProductList = () => {
     if (selectedPriceRange !== 'all') query.set('price', selectedPriceRange);
     if (selectedSort !== 'featured') query.set('sort', selectedSort);
     if (currentPage !== 1) query.set('page', currentPage.toString());
+    if (selectedStatus !== '') query.set('status', selectedStatus);
 
     selectedCategory.forEach(cat => query.append('category', cat));
     selectedDiet.forEach(diet => query.append('diet', diet));
@@ -102,6 +105,7 @@ const ProductList = () => {
     setSearchTerm(searchParams.get('search') || '');
     setSelectedPriceRange(searchParams.get('price') || 'all');
     setSelectedSort(searchParams.get('sort') || 'featured');
+    setSelectedStatus(searchParams.get('status') || '');
 
     const categories = searchParams.getAll('category');
     if (categories.length) setSelectedCategory(categories);
@@ -114,7 +118,7 @@ const ProductList = () => {
     updateQueryParams();
     fetchProducts();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentPage, searchTerm, selectedCategory, selectedDiet, selectedPriceRange, selectedSort]);
+  }, [currentPage, searchTerm, selectedCategory, selectedDiet, selectedPriceRange, selectedSort, selectedStatus]);
 
   return (
     <section className="py-12">
@@ -132,7 +136,7 @@ const ProductList = () => {
             />
           </motion.div>
           <motion.div className="lg:w-3/4" variants={slideInFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <ProductListHeader sortValue={selectedSort} onSortChange={setSelectedSort} resultCount={total} />
+            <ProductListHeader sortValue={selectedSort} onSortChange={setSelectedSort} statusValue={selectedStatus} onStatusChange={setSelectedStatus} resultCount={total} />
 
             {error && <p className="text-center text-red-500">{error}</p>}
             <motion.div

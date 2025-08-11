@@ -49,15 +49,18 @@ const ProductCard = ({ id, title, image, price, description, badgeName, sizes }:
   return (
     <>
       <div className="cake-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer"  onClick={() => setDialogOpen(true)}>
-        <img src={image} alt={title} className="w-full h-64 object-cover" loading="lazy" />
+        <div className="relative">
+          <img src={image} alt={title} className="w-full h-64 object-cover" loading="lazy" />
+          {badgeName && (
+              <span
+              className="text-sm bg-primary text-white px-2 py-1 rounded-full absolute top-2 right-2 uppercase"
+            >{badgeName}</span>
+            )}
+        </div>
         <div className="p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold">{title}</h3>
-            {badgeName && (
-              <span
-              className="text-sm bg-primary/10 text-primary px-2 py-1 rounded-full"
-            >{badgeName}</span>
-            )}
+            
           </div>
         <p className="text-gray-600 mb-4 text-sm">
           {description}

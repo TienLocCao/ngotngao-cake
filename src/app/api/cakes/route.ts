@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-
+  // Pagination and filtering parameters
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '6');
   const search = searchParams.get('search') || '';
@@ -11,6 +11,7 @@ export async function GET(req: Request) {
   // const diets = searchParams.getAll('diet');           // ✅ MULTI
   const priceRange = searchParams.get('price') || 'all';
   const sort = searchParams.get('sort') || 'featured';
+  const status = searchParams.get('status') || '';
 
   const skip = (page - 1) * limit;
 
@@ -29,15 +30,14 @@ export async function GET(req: Request) {
       },
     };
   }
-
-  if (sort === 'best-selling' || sort === 'newest') {
+  if (status) {
     const badgeMap: Record<string, string> = {
       'best-selling': 'Best Seller',
       'newest': 'New',
     };
     where.badge = {
       name: {
-        equals: badgeMap[sort],
+        equals: badgeMap[status],
         mode: 'insensitive',
       },
     };
@@ -119,3 +119,60 @@ export async function GET(req: Request) {
 //     return NextResponse.json({ error: 'Failed to create cake' }, { status: 500 });
 //   }
 // }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const {
+      title,
+      description,
+      fullDescription,
+      imageUrl,
+      price,
+      categoryId,
+      badgeId, // có thể null
+      sizes, // array [{ sizeLabel, servings, price }]
+    } = body;
+
+    if (!title || !description || !fullDescription || !imageUrl || !price || !categoryId) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Tạo cake và size
+    const newCake = await prisma.cake.create({
+      data: {
+        title,
+        description,
+        fullDescription,
+        imageUrl,
+        price,
+        categoryId,
+        badgeId: badgeId || null,
+        sizes: {
+          create: sizes?.map((size: any) => ({
+            sizeLabel: size.sizeLabel,
+            servings: size.servings,
+            price: size.price,
+          })) || [],
+        },
+      },
+      include: {
+        sizes: true,
+        category: true,
+        badge: true,
+      },
+    });
+
+    return NextResponse.json(newCake, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: 'Failed to create cake' },
+      { status: 500 }
+    );
+  }
+}

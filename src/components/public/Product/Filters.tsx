@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { CategoryAPI } from "@/lib/api";
 
 interface Props {
   selectedCategory: string[];
@@ -12,8 +13,6 @@ interface Props {
   onSearch: (term: string) => void;
 }
 
-const categories = ['Birthday', 'Wedding', 'Custom', 'Cupcakes'];
-// const diets = ['gluten', 'vegan', 'sugarfree', 'nutfree'];
 const prices = ['all', 'under25', '25-50', '50-100', 'over100'];
 
 const ProductFilters = ({
@@ -25,6 +24,10 @@ const ProductFilters = ({
   onPriceChange,
   onSearch,
 }: Props) => {
+
+  const [loadingCategory, setLoadingCategory] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+
   const handleCheckboxChange = (
     currentValues: string[],
     value: string,
@@ -36,6 +39,36 @@ const ProductFilters = ({
       : currentValues.filter((v) => v !== value);
     onChange(updated);
   };
+
+  const fetchCategories = async () => {
+    setLoadingCategory(true);
+    try {
+      const query = new URLSearchParams({
+        page: 'all',
+      });
+
+      const response = await CategoryAPI.getList(query as any);
+      if (!response.status) throw new Error('Failed to fetch categories');
+
+      const { items } = await response.data;
+      const formattedCategories = items.map((category: any) => category.name);
+
+      setCategories(formattedCategories);
+    } catch {
+      setCategories([]);
+    } finally {
+      setLoadingCategory(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!categories.length) {
+      console.log("Fetching categories as none are loaded yet", categories.length);
+      fetchCategories();
+    }
+  }, [categories]);
+
+  
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -96,31 +129,6 @@ const ProductFilters = ({
           ))}
         </div>
       </div>
-
-      {/* Dietary */}
-      {/* <div className="mb-6">
-        <h4 className="font-medium mb-3">Dietary Options</h4>
-        <div className="space-y-2">
-          {diets.map((diet) => (
-            <label key={diet} className="flex items-center">
-              <input
-                type="checkbox"
-                className="form-checkbox text-primary rounded border-gray-300"
-                checked={selectedDiet.includes(diet)}
-                onChange={(e) =>
-                  handleCheckboxChange(
-                    selectedDiet,
-                    diet,
-                    onDietChange,
-                    e.target.checked
-                  )
-                }
-              />
-              <span className="ml-2 text-gray-700 capitalize">{diet}</span>
-            </label>
-          ))}
-        </div>
-      </div> */}
 
       {/* Reset Button */}
       <button

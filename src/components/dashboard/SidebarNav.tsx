@@ -19,7 +19,11 @@ const menuItems = [
     id: 2,
     label: "Projects",
     icon: FolderIcon,
-    children: [{ label: "Project List", path: "dashboard/projects" }],
+    children: [
+      { label: "Project List test", path: "/dashboard/projects" },
+      { label: "Product List", path: "/dashboard/cakes" },
+      { label: "Category List", path: "/dashboard/categories" }
+    ],
   },
   {
     id: 3,
