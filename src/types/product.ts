@@ -11,13 +11,13 @@ export const ProductStatusOptions: {
 }];
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
-  image: string;
-  price: string;
+  image: string | null;
+  price: number | null;
   description: string;
   badgeName?: ProductStatus;
-  sizes: { id: string; sizeLabel: string; price: any }[];
+  sizes: { id: string; sizeLabel: string; price: number | null }[];
   // createdAt: string;
   // updatedAt: string;
 }
@@ -31,11 +31,11 @@ export  interface ProductErrors {
 
 export interface ProductFormData {
   name: string;
-  image: string;
-  price: string;
+  image: string | null;
+  price: number | null;
   description: string;
-  badgeName: ProductStatus;
-  sizes: { id: string; sizeLabel: string; price: string }[];
+  badgeName: string;
+  sizes: { id: string; sizeLabel: string; price: number | null }[];
 }
 
 export type CreateProductDto = ProductFormData;

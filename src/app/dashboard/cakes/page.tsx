@@ -12,6 +12,7 @@ import Loader from '@/components/dashboard/common/Loader';
 import SectionHeader from '@/components/dashboard/common/SectionHeader';
 import { useModal } from '@/hooks/useModal';
 import { useDebounce } from '@/hooks/useDebounce';
+import { CakeAPI } from "@/lib/api";
 
 // interface Product {
 //   id: string;
@@ -56,14 +57,14 @@ const ProductList = () => {
       //   query.append('tag', tag);
       // });
 
-      const response = await fetch(`/api/cakes?${query}`);
-      if (!response.ok) throw new Error('Failed to fetch products');
+      const response = await CakeAPI.getList(query as any);
+      if (!response.status) throw new Error('Failed to fetch products');
 
-      const { items, total } = await response.json();
+      const { items, total } = await response.data;
 
       const formattedProducts = items.map((cake: any): Product => ({
         id: cake.id,
-        name: cake.title,
+        name: cake.name,
         image: cake.imageUrl,
         price: cake.price,
         description: cake.description,
@@ -96,31 +97,58 @@ const ProductList = () => {
     setStatus(value)
   }
 
-  const handleCreateProduct = async (data: CreateProductDto) => {
+  const handleCreateProduct = async (formData: CreateProductDto) => {
     try {
+      const payload = {
+          name: formData.name,
+          description: formData.description,
+          fullDescription: formData.description, // Hoặc lấy từ form nếu có field riêng
+          imageUrl: formData.image,
+          price: formData.price,
+          categoryId: 'cme8cfmjm000091t0koiuooz6', // TODO: Lấy từ state hoặc form
+          // badgeId: formData.badgeName ? parseInt(formData.badgeName) : null,
+          badgeId: 1,
+          sizes: formData.sizes.map(size => ({
+            sizeLabel: size.sizeLabel,
+            servings: '4-6', // TODO: Lấy từ form nếu có
+            price: size.price,
+          })),
+        };
+      await CakeAPI.create(payload as any);
       toast.success('Product created');
-      return true;
-    } catch {
-      toast.error('Failed to create product');
-      return false;
+      await fetchProducts();
+      return { success: true };
+    } catch (err: any) {
+      let errorMsg = 'Failed to create category';
+      if (err.response?.data?.error) {
+        errorMsg = err.response.data.error; // ví dụ: "Category đã tồn tại"
+      }
+      return { success: false, fieldErrors: { name: errorMsg } };
     }
   };
 
   const handleEditProduct = async (data: UpdateProductDto) => {
-    if (!formModal.data) return false;
+    if (!formModal.data) return { success: false, fieldErrors: { name: 'Cake not found' } };
     try {
+      await CakeAPI.update(formModal.data.id, { ...data,badgeId: 1, sizes: (data.sizes ?? []).map(size => ({ ...size, servings: '4-6' })) } as any);
       toast.success('Product updated');
-      return true;
-    } catch {
-      toast.error('Failed to update product');
-      return false;
+      await fetchProducts();
+      return { success: true };
+    } catch (err: any) {
+      let errorMsg = 'Failed to create category';
+      if (err.response?.data?.error) {
+        errorMsg = err.response.data.error; // ví dụ: "Category đã tồn tại"
+      }
+      return { success: false, fieldErrors: { name: errorMsg } };
     }
   };
 
   const handleDeleteProduct = async () => {
     if (!deleteModal.data) return;
     try {
+      await CakeAPI.delete(deleteModal.data.id);
       toast.success('Product deleted');
+      await fetchProducts();
     } catch {
       toast.error('Failed to delete product');
     } finally {
@@ -163,7 +191,7 @@ const ProductList = () => {
           isOpen={formModal.isOpen}
           onClose={formModal.close}
           onSubmit={formModal.data ? handleEditProduct : handleCreateProduct}
-          product={formModal.data || undefined}
+          product={formModal.data ? { ...formModal.data, badgeName: formModal.data.badgeName ?? '' } : undefined}
         />
 
         {deleteModal.isOpen && deleteModal.data && (

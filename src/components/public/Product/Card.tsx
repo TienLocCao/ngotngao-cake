@@ -8,18 +8,9 @@ import { useSession } from 'next-auth/react';
 
 import { CartItem } from '@/lib/cart';
 import { useCart } from '@/lib/context/CartContext';
+import { Product } from '@/types/product';
 
-interface ProductCardProps {
-  id: string;
-  title: string;
-  image: string;
-  price: number;
-  description: string;
-  badgeName?: string;
-  sizes: { id: string; sizeLabel: string; price: any }[];
-}
-
-const ProductCard = ({ id, title, image, price, description, badgeName, sizes }: ProductCardProps) => {
+const ProductCard = ({ id, name, image, price, description, badgeName, sizes }: Product) => {
  const { addToCart, refresh } = useCart();
   const { data: session } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -28,7 +19,7 @@ const ProductCard = ({ id, title, image, price, description, badgeName, sizes }:
   const handleAddToCart = () => {
     const item: CartItem = {
       id,
-      title,
+      name,
       image,
       price,
       sizeId: selectedSize,
@@ -36,7 +27,7 @@ const ProductCard = ({ id, title, image, price, description, badgeName, sizes }:
     };
 
     addToCart(item); // 
-    toast.success(`${title} (${selectedSize}) added to cart!`);
+    toast.success(`${name} (${selectedSize}) added to cart!`);
     setDialogOpen(false);
   };
 
@@ -50,7 +41,7 @@ const ProductCard = ({ id, title, image, price, description, badgeName, sizes }:
     <>
       <div className="cake-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer"  onClick={() => setDialogOpen(true)}>
         <div className="relative">
-          <img src={image} alt={title} className="w-full h-64 object-cover" loading="lazy" />
+          <img src={image ?  image : ''} alt={name} className="w-full h-64 object-cover" loading="lazy" />
           {badgeName && (
               <span
               className="text-sm bg-primary text-white px-2 py-1 rounded-full absolute top-2 right-2 uppercase"
@@ -59,14 +50,14 @@ const ProductCard = ({ id, title, image, price, description, badgeName, sizes }:
         </div>
         <div className="p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-semibold">{title}</h3>
+            <h3 className="text-lg font-semibold">{name}</h3>
             
           </div>
         <p className="text-gray-600 mb-4 text-sm">
           {description}
         </p>
           <div className="flex justify-between items-center">
-          <span className="text-xl font-bold text-primary">{(+price).toLocaleString('vi-VN')}</span>
+          <span className="text-xl font-bold text-primary">{price ? (+price).toLocaleString('vi-VN') : 'N/A'}</span>
         </div>
       </div>
       </div>

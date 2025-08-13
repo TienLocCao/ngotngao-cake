@@ -16,7 +16,7 @@ type Props = {
 };
 
 const columns = [
-  { key: 'title', label: 'Name', width: '200px' },
+  { key: 'name', label: 'Name', width: '200px' },
   { key: 'image', label: 'Image', width: '120px' },
   { key: 'price', label: 'Price', width: '100px' },
   { key: 'description', label: 'Description', width: '300px' },
@@ -41,11 +41,14 @@ const ProductTable = ({ products, onEdit, onDelete, currentPage, pageSize, onPag
             <td className="px-4 py-3 text-sm text-gray-900 truncate" title={product.name}>
               {product.name}
             </td>
-            <td className="px-4 py-3 text-sm text-gray-900 truncate" title={product.image}>
-              <img src={product.image} alt={product.name} className='w-20' />
+            <td className="px-4 py-3 text-sm text-gray-900 truncate" title={product.image || 'No image'}>
+              {product.image
+                ? <img src={product.image} alt={product.name} className="w-20" />
+                : <img src="/no-image.png" alt="No image" className="w-20" />
+              }
             </td>
-            <td className="px-4 py-3 text-sm text-gray-900 truncate" title={product.price}>
-              { (+product.price).toLocaleString('vi-VN') }
+            <td className="px-4 py-3 text-sm text-gray-900 truncate" title={product.price ? (+product.price).toLocaleString('vi-VN') : 'N/A'}>
+              { product.price ? (+product.price).toLocaleString('vi-VN') : 'N/A' }
             </td>
             <td className="px-4 py-3 text-sm text-gray-500 truncate" title={product.description}>{product.description}</td>
             <td className="px-4 py-3 text-sm text-gray-500 truncate" title={product.badgeName}>{product.badgeName}</td>

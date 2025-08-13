@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   const skip = (page - 1) * limit;
 
   const where: any = {
-    title: {
+    name: {
       contains: search,
       mode: 'insensitive',
     },
@@ -123,29 +123,42 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const {
-      title,
+      name,
       description,
       fullDescription,
       imageUrl,
       price,
       categoryId,
-      badgeId, // có thể null
+      badgeId,
       sizes, // array [{ sizeLabel, servings, price }]
     } = body;
 
-    if (!title || !description || !fullDescription || !imageUrl || !price || !categoryId) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    // Validate required fields
+    if (!name || !description || !fullDescription || !imageUrl || !price || !categoryId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Tạo cake và size
+    // Check duplicate name
+    const existingCake = await prisma.cake.findFirst({
+      where: { name: name.trim() },
+    });
+    if (existingCake) {
+      return NextResponse.json({ error: 'Cake name already exists' }, { status: 400 });
+    }
+
+    // Check duplicate sizes in request
+    if (sizes && sizes.length > 0) {
+      const labels = sizes.map((s: any) => s.sizeLabel.toLowerCase());
+      if (new Set(labels).size !== labels.length) {
+        return NextResponse.json({ error: 'Duplicate size labels are not allowed' }, { status: 400 });
+      }
+    }
+
+    // Create cake
     const newCake = await prisma.cake.create({
       data: {
-        title,
+        name: name.trim(),
         description,
         fullDescription,
         imageUrl,
@@ -170,9 +183,6 @@ export async function POST(req: Request) {
     return NextResponse.json(newCake, { status: 201 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: 'Failed to create cake' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create cake' }, { status: 500 });
   }
 }

@@ -39,6 +39,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 <!-- run again prisma -->
 npx prisma migrate dev --name init
 Remove-Item -Recurse -Force prisma\migrations
-npx prisma migrate dev --name init
+npx prisma migrate dev
 npx prisma migrate reset
 <!-- npx prisma db seed -->

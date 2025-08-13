@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 
 interface NumberInputProps {
-  value: string;
-  onChange: (rawValue: string) => void;
+  value: number | null;
+  onChange: (rawValue: number | null) => void;
   placeholder?: string;
   name?: string;
   id?: string;
@@ -11,9 +11,9 @@ interface NumberInputProps {
   className?: string;
 }
 
-const formatNumberWithCommas = (value: string) => {
-  if (!value) return '';
-  return parseInt(value, 10).toLocaleString('en-US');
+const formatNumberWithCommas = (value: number | null) => {
+  if (value === null || isNaN(Number(value))) return '';
+  return value.toLocaleString('en-US');
 };
 
 const NumberInput: React.FC<NumberInputProps> = ({
@@ -28,12 +28,19 @@ const NumberInput: React.FC<NumberInputProps> = ({
   const [displayValue, setDisplayValue] = useState(formatNumberWithCommas(value));
 
   useEffect(() => {
-    setDisplayValue(formatNumberWithCommas(value));
+    if (value !== null && value !== undefined) {
+      const numValue = Number(value);
+      setDisplayValue(numValue.toLocaleString('en-US'));
+    }
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/[^0-9]/g, '');
-    onChange(raw);
+    if (raw === '') {
+      onChange(null);
+    } else {
+      onChange(Number(raw));
+    }
   };
 
   return (

@@ -75,11 +75,11 @@ model Badge {
 
 model Cake {
   id              String   @id @default(cuid())
-  title           String
+  name           String
   description     String
   fullDescription String
-  imageUrl        String
-  price           Decimal
+  imageUrl        String?
+  price           Decimal?
   categoryId      String
   category        Category @relation(fields: [categoryId], references: [id])
 

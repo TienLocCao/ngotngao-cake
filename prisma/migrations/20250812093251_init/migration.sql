@@ -72,11 +72,11 @@ CREATE TABLE "Badge" (
 -- CreateTable
 CREATE TABLE "Cake" (
     "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "fullDescription" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
-    "price" DECIMAL(65,30) NOT NULL,
+    "imageUrl" TEXT,
+    "price" DECIMAL(65,30),
     "categoryId" TEXT NOT NULL,
     "badgeId" INTEGER,
 

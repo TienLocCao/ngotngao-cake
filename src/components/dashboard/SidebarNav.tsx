@@ -20,7 +20,6 @@ const menuItems = [
     label: "Projects",
     icon: FolderIcon,
     children: [
-      { label: "Project List test", path: "/dashboard/projects" },
       { label: "Product List", path: "/dashboard/cakes" },
       { label: "Category List", path: "/dashboard/categories" }
     ],
@@ -32,6 +31,14 @@ const menuItems = [
     children: [
       { label: "General Settings", path: "/settings/general" },
       { label: "Appearance", path: "/settings/appearance" },
+    ],
+  },
+  {
+    id: 2,
+    label: "UI Test",
+    icon: FolderIcon,
+    children: [
+      { label: "Project List test", path: "/dashboard/projects" },
     ],
   },
 ];
