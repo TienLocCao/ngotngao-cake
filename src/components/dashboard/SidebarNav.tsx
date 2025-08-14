@@ -21,7 +21,8 @@ const menuItems = [
     icon: FolderIcon,
     children: [
       { label: "Product List", path: "/dashboard/cakes" },
-      { label: "Category List", path: "/dashboard/categories" }
+      { label: "Category List", path: "/dashboard/categories" },
+      { label: "Badge List", path: "/dashboard/badges" }
     ],
   },
   {
