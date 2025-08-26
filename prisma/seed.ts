@@ -13,8 +13,8 @@ async function main() {
 
     await prisma.badge.createMany({
         data: [
-            { name: 'Best Seller' },
-            { name: 'New' }
+          { name: 'New' },
+          { name: 'Best Seller' },
         ]
     });
     // 2. Find one category to link cake to

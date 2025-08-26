@@ -11,7 +11,8 @@ export const productSchema = z.object({
   image: z.string().url("Image must be a valid URL").nullable(),
   price: z.coerce.number().positive("Price must be greater than 0").nullable(),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  badgeName: z.string(),
+  badgeId: z.number(),
+  categoryId: z.string().min(1, "Category is required"),
   sizes: z.array(sizeSchema)
 });
 

@@ -12,22 +12,13 @@ import Loader from '@/components/dashboard/common/Loader';
 import SectionHeader from '@/components/dashboard/common/SectionHeader';
 import { useModal } from '@/hooks/useModal';
 import { useDebounce } from '@/hooks/useDebounce';
-import { CakeAPI } from "@/lib/api";
-
-// interface Product {
-//   id: string;
-//   title: string;
-//   image: string;
-//   price: number;
-//   description: string;
-//   badgeName?: string;
-//   sizes: { id: string; sizeLabel: string; price: any }[];
-// }
-
+import { CakeAPI, CategoryAPI, BadgeAPI } from "@/lib/api";
 
 const ProductList = () => {
   const [total, setTotal] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [badges, setBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
@@ -61,7 +52,7 @@ const ProductList = () => {
       if (!response.status) throw new Error('Failed to fetch products');
 
       const { items, total } = await response.data;
-
+      
       const formattedProducts = items.map((cake: any): Product => ({
         id: cake.id,
         name: cake.name,
@@ -69,6 +60,8 @@ const ProductList = () => {
         price: cake.price,
         description: cake.description,
         badgeName: cake.badge.name || undefined,
+        badgeId: cake.badge.id,
+        categoryId: cake.categoryId,
         sizes: cake.sizes
       }));
 
@@ -83,11 +76,45 @@ const ProductList = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const query = new URLSearchParams({
+        page: 'all',
+        limit: '10',
+      });
+      const res = await CategoryAPI.getList(query as any);
+      if (!res.status) throw new Error('Failed to fetch categories');
+      setCategories(res.data.items);
+    } catch {
+      toast.error('Failed to fetch categories');
+      setCategories([]);
+    }
+  };
+
+  const fetchBadges = async () => {
+    try {
+      const query = new URLSearchParams({
+        page: 'all',
+        limit: '10',
+      });
+      const res = await BadgeAPI.getList(query as any);
+      if (!res.status) throw new Error('Failed to fetch badges');
+      setBadges(res.data.items);
+    } catch {
+      toast.error('Failed to fetch badges');
+      setBadges([]);
+    }
+  };
+
   const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
       fetchProducts();
   }, [currentPage, status, debouncedSearch]);
+  useEffect(() => {
+      fetchCategories();
+      fetchBadges();
+  }, []);
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -105,12 +132,11 @@ const ProductList = () => {
           fullDescription: formData.description, // Hoặc lấy từ form nếu có field riêng
           imageUrl: formData.image,
           price: formData.price,
-          categoryId: 'cme8cfmjm000091t0koiuooz6', // TODO: Lấy từ state hoặc form
-          // badgeId: formData.badgeName ? parseInt(formData.badgeName) : null,
-          badgeId: 1,
+          categoryId: formData.categoryId, // TODO: Lấy từ state hoặc form
+          badgeId: formData.badgeId ? formData.badgeId : null,
           sizes: formData.sizes.map(size => ({
             sizeLabel: size.sizeLabel,
-            servings: '4-6', // TODO: Lấy từ form nếu có
+            servings: '4-6 (test)', // TODO: Lấy từ form nếu có
             price: size.price,
           })),
         };
@@ -130,7 +156,7 @@ const ProductList = () => {
   const handleEditProduct = async (data: UpdateProductDto) => {
     if (!formModal.data) return { success: false, fieldErrors: { name: 'Cake not found' } };
     try {
-      await CakeAPI.update(formModal.data.id, { ...data,badgeId: 1, sizes: (data.sizes ?? []).map(size => ({ ...size, servings: '4-6' })) } as any);
+      await CakeAPI.update(formModal.data.id, { ...data, sizes: (data.sizes ?? []).map(size => ({ ...size, servings: '4-6 (test)' })) } as any);
       toast.success('Product updated');
       await fetchProducts();
       return { success: true };
@@ -191,7 +217,9 @@ const ProductList = () => {
           isOpen={formModal.isOpen}
           onClose={formModal.close}
           onSubmit={formModal.data ? handleEditProduct : handleCreateProduct}
-          product={formModal.data ? { ...formModal.data, badgeName: formModal.data.badgeName ?? '' } : undefined}
+          product={formModal.data ?? undefined}
+          categories={categories}
+          badges={badges} 
         />
 
         {deleteModal.isOpen && deleteModal.data && (

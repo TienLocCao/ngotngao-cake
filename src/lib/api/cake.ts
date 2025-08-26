@@ -11,7 +11,7 @@ export const CakeAPI = {
     fullDescription: string;
     imageUrl: string;
     price: number;
-    categoryId: number;
+    categoryId: string;
     badgeId?: number | null;
     sizes?: { sizeLabel: string; servings: number; price: number }[];
   }) => request.post("/cakes", data),

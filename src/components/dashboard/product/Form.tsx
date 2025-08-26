@@ -4,7 +4,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import NumberInput from "@/components/dashboard/common/NumberInput";
 import SizeList from "./SizeList";
 import { productSchema, ProductFormData, ProductErrors } from "@/schemas/product";
-import { ProductStatusOptions } from '@/types/product';
+// import { ProductStatusOptions } from '@/types/product';
 
 
 interface ProductFormProps {
@@ -12,6 +12,8 @@ interface ProductFormProps {
   onClose: () => void;
   onSubmit: (product: ProductFormData) => Promise<{ success: boolean }>;
   product?: ProductFormData;
+  categories?: any[];
+  badges?: any[];
 }
 
 const emptyErrors: ProductErrors = {
@@ -19,6 +21,7 @@ const emptyErrors: ProductErrors = {
   image: "",
   price: "",
   description: "",
+  categoryId: "",
   sizes: [],
 };
 
@@ -27,13 +30,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
   onClose,
   onSubmit,
   product,
+  categories,
+  badges
 }) => {
   const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     image: "",
     price: null,
     description: "",
-    badgeName: "New",
+    badgeId: 1,
+    categoryId: "",
     sizes: [],
   });
   const [errors, setErrors] = useState<ProductErrors>(emptyErrors);
@@ -48,7 +54,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
         image: "",
         price: null,
         description: "",
-        badgeName: "New",
+        badgeId: 1,
+        categoryId: "",
         sizes: [],
       });
     }
@@ -62,6 +69,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       image: "",
       price: "",
       description: "",
+      categoryId: "",
       sizes: formData.sizes.map((s) => ({
         id: s.id,
         sizeLabel: "",
@@ -225,21 +233,49 @@ const ProductForm: React.FC<ProductFormProps> = ({
               <div>
                 <label className="block text-sm font-medium">Badge</label>
                 <select
-                  value={formData.badgeName}
+                  value={formData.badgeId}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      badgeName: e.target.value as ProductFormData["badgeName"],
+                      badgeId: Number(e.target.value) as ProductFormData["badgeId"],
                     })
                   }
                   className="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6 transition-colors"
                 >
-                  {ProductStatusOptions.map((status) => (
-                    <option key={status.key} value={status.label}>
-                      {status.label}
+                  {(badges|| []).map((status, index) => (
+                    <option key={`${status.id}-${index}`} value={status.id}>
+                      {status.name}
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Category</label>
+                <select
+                  value={formData.categoryId}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      categoryId: e.target.value as ProductFormData["categoryId"],
+                    })
+                  }
+                  className={`block w-full rounded-md px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ${
+                    errors.categoryId
+                      ? "ring-red-300 focus:ring-red-500"
+                      : "ring-gray-300 focus:ring-indigo-500"
+                  } placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                >
+                  <option value="">No category</option>
+                  {(categories|| []).map((category, index) => (
+                    <option key={`${category.id}-${index}`} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.categoryId && (
+                  <p className="mt-2 text-sm text-red-600">{errors.categoryId}</p>
+                )}
               </div>
 
               {/* Sizes */}

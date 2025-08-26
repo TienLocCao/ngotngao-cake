@@ -1,14 +1,14 @@
-export type ProductStatus = 'Best Seller' | 'New';
-export const ProductStatusOptions: {
-  key: 'best-selling' | 'newest';
-  label: string;
-}[] = [{
-  key: 'best-selling',
-  label: 'Best Seller'
-}, {
-  key: 'newest',
-  label: 'New'
-}];
+// export type ProductStatus = 'Best Seller' | 'New';
+// export const ProductStatusOptions: {
+//   key: 'best-selling' | 'newest';
+//   label: string;
+// }[] = [{
+//   key: 'best-selling',
+//   label: 'Best Seller'
+// }, {
+//   key: 'newest',
+//   label: 'New'
+// }];
 
 export interface Product {
   id: string;
@@ -16,7 +16,9 @@ export interface Product {
   image: string | null;
   price: number | null;
   description: string;
-  badgeName?: ProductStatus;
+  badgeId: number;
+  categoryId: string;
+  badgeName?: string;
   sizes: { id: string; sizeLabel: string; price: number | null }[];
   // createdAt: string;
   // updatedAt: string;
@@ -26,6 +28,7 @@ export  interface ProductErrors {
   image: string;
   price: string;
   description: string;
+  categoryId: string;
   sizes: { id: string; sizeLabel: string; price: string }[];
 }
 
@@ -34,7 +37,8 @@ export interface ProductFormData {
   image: string | null;
   price: number | null;
   description: string;
-  badgeName: string;
+  badgeId: number;
+  categoryId: string;
   sizes: { id: string; sizeLabel: string; price: number | null }[];
 }
 
