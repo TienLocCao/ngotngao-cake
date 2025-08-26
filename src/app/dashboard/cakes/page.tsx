@@ -154,6 +154,7 @@ const ProductList = () => {
   };
 
   const handleEditProduct = async (data: UpdateProductDto) => {
+    console.log('Editing product with data:', data);
     if (!formModal.data) return { success: false, fieldErrors: { name: 'Cake not found' } };
     try {
       await CakeAPI.update(formModal.data.id, { ...data, sizes: (data.sizes ?? []).map(size => ({ ...size, servings: '4-6 (test)' })) } as any);

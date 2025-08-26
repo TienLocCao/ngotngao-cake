@@ -5,6 +5,7 @@ import NumberInput from "@/components/dashboard/common/NumberInput";
 import SizeList from "./SizeList";
 import { productSchema, ProductFormData, ProductErrors } from "@/schemas/product";
 // import { ProductStatusOptions } from '@/types/product';
+import { UploadAPI } from "@/lib/api";
 
 
 interface ProductFormProps {
@@ -44,6 +45,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   });
   const [errors, setErrors] = useState<ProductErrors>(emptyErrors);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (product) {
@@ -117,6 +119,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
     return !hasError;
   };
 
+  const handleFileChange = (file: File) => {
+    // Preview ảnh tạm (local URL)
+    const previewUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({ ...prev, image: previewUrl }));
+    setSelectedFile(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,7 +132,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const res = await onSubmit(formData);
+      let imageUrl = formData.image;
+      if (selectedFile) {
+        const res = await UploadAPI.create(selectedFile);
+        imageUrl = res.data.url || res.data.data?.url; // tùy backend trả về
+      }
+      const res = await onSubmit({
+      ...formData,
+      image: imageUrl, // lưu URL thật vào DB
+    });
       if (res.success) onClose();
     } catch (err) {
       console.error(err);
@@ -197,7 +213,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               </div>
 
               {/* Image */}
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium">Image URL</label>
                 <input
                   type="text"
@@ -214,8 +230,32 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 {errors.image && (
                   <p className="mt-2 text-sm text-red-600">{errors.image}</p>
                 )}
+              </div> */}
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium">Product Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileChange(file);
+                  }}
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                />
+                {formData.image && (
+                  <div className="mt-3">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="h-32 w-32 object-cover rounded-md border"
+                    />
+                  </div>
+                )}
+                {errors.image && (
+                  <p className="mt-2 text-sm text-red-600">{errors.image}</p>
+                )}
               </div>
-
               {/* Price */}
               <div>
                 <label className="block text-sm font-medium">Price</label>
