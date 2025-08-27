@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NumberInput from "@/components/dashboard/common/NumberInput";
 import SizeList from "./SizeList";
-import { productSchema, ProductFormData, ProductErrors } from "@/schemas/product";
+import { productSchema, fileSchema, ProductFormData, ProductErrors } from "@/schemas/product";
 // import { ProductStatusOptions } from '@/types/product';
 import { UploadAPI } from "@/lib/api";
 
@@ -91,6 +91,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
           (newErrors as any)[path] = err.message;
         }
       });
+    }
+
+    // validate file upload nếu có
+    if (selectedFile) {
+      const fileResult = fileSchema.safeParse(selectedFile);
+      if (!fileResult.success) {
+        newErrors.image = fileResult.error.issues[0].message;
+      }
     }
 
     // Check trùng sizeLabel

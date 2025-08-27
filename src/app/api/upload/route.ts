@@ -3,6 +3,9 @@ import path from "path";
 import fs from "fs/promises";
 import crypto from "crypto";
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -10,6 +13,19 @@ export async function POST(req: NextRequest) {
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File is too large. Max size is ${MAX_FILE_SIZE / 1024 / 1024}MB` },
+        { status: 400 }
+      );
+    }
+    // Check file type (MIME)
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: `Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(", ")}` },
+        { status: 400 }
+      );
     }
 
     // đọc nội dung file từ stream
