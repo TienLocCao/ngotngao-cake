@@ -16,8 +16,8 @@ export interface Product {
   image: string | null;
   price: number | null;
   description: string;
-  badgeId: number;
-  categoryId: string;
+  badgeId?: number;
+  categoryId?: string;
   badgeName?: string;
   sizes: { id: string; sizeLabel: string; price: number | null }[];
   // createdAt: string;

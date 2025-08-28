@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Product {
   id: string;
-  title: string;
+  name: string;
   image: string;
   price: number;
   description: string;
@@ -62,7 +62,7 @@ const ProductList = () => {
 
       const formattedProducts = items.map((cake: any): Product => ({
         id: cake.id,
-        title: cake.title,
+        name: cake.name,
         image: cake.imageUrl,
         price: cake.price,
         description: cake.description,

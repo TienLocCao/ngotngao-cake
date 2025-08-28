@@ -14,7 +14,7 @@ const ProductCard = ({ id, name, image, price, description, badgeName, sizes }: 
  const { addToCart, refresh } = useCart();
   const { data: session } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState<string>(sizes[0]?.id || '');
+  const [selectedSize, setSelectedSize] = useState<string>(sizes[0]?.sizeLabel || '');
 
   const handleAddToCart = () => {
     const item: CartItem = {
